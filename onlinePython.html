@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* 全体のコンテナ */
+        .container {
+            display: flex; /* フレックスボックスを使用 */
+            height: 100vh; /* 画面の高さいっぱいにする */
+        }
+
+        /* 左側のdiv */
+        .left-div {
+            flex: 1; /* 左側のdivが残りのスペースをすべて占める */
+            background-color: #f1f1f1;
+            padding: 10px;
+        }
+
+        /* 右側のdiv */
+        .right-div {
+            flex: 1; /* 右側のdivが残りのスペースをすべて占める */
+            background-color: #ddd;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body style="margin:0px; padding:0px;">
+    <div class="container">
+        <div class="left-div">
+            <!-- 左側のコンテンツをここに配置 -->
+            <textarea id="code" type="text" style="width:100%;height:90%;resize:none;">
+import math
+
+list = [n for n in range(0,10)]
+print(list[5:8])
+
+print(math.sin(0.5))
+print(math.log(10))
+
+array1=[1,2,3]
+array2=[4,5,6]
+for x,y in zip(array1,array2):
+    print(x,y)
+
+dict_ = {'a':123,'b':456}
+
+for k in dict_:
+    print(k,dict_[k])
+
+def add(x,y):
+	return x+y
+
+print(add(100,200))    
+            </textarea>
+            <button id="run" onclick="evaluatePython()">Run</button>
+        </div>
+        <div class="right-div">
+            <textarea id="output" style="width: 100%;height:100%" disabled></textarea>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.22.1/full/pyodide.js"></script>
+    <!-- <script src="./pyodide/pyodide.js"></script> -->
+    <script>
+
+        const output = document.querySelector('#output');
+        const code = document.querySelector('#code');
+
+        code.addEventListener('keydown', function(e) {
+            if (e.key == 'Tab') {
+                e.preventDefault();
+                var start = this.selectionStart;
+                var end = this.selectionEnd;
+
+                this.value = this.value.substring(0, start) +
+                "\t" + this.value.substring(end);
+
+                this.selectionStart =
+                this.selectionEnd = start + 1;
+            }
+        });
+
+        // define a new console
+        var console=(function(oldCons){
+            return {
+                log: function(text){
+                    oldCons.log(text);
+                    // Your code
+                    output.value+=text+"\n";
+                },
+                info: function (text) {
+                    oldCons.info(text);
+                    // Your code
+                    // output.value+=text;
+                },
+                warn: function (text) {
+                    oldCons.warn(text);
+                    // Your code
+                    // output.value+=text;
+                },
+                error: function (text) {
+                    oldCons.error(text);
+                    // Your code
+                    // output.value+=text;
+                }
+            };
+        }(window.console));
+
+        //Then redefine the old console
+        window.console = console;
+
+        output.value = "Initializing...\n";
+        // init Pyodide
+        async function main() {
+            let pyodide = await loadPyodide();
+            output.value = "Ready!\n";
+            return pyodide;
+        }
+        let pyodideReadyPromise = main();
+
+        async function evaluatePython() {
+            output.value="";
+            let pyodide = await pyodideReadyPromise;
+            pyodide.FS.writeFile("test.py", code.value);
+
+            let promise = new Promise((resolve, reject) => {
+            pyodide.runPython(`
+                exec(open('test.py').read())
+            `)
+            // import sys
+            //     sys.modules.pop("test", None)
+            // resolve(true)
+            }).catch(err => {
+                    console.log(err);
+            });
+
+            await promise;
+        }
+    </script>
+</body>
+</html>
