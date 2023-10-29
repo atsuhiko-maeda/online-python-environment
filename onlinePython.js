@@ -97,12 +97,14 @@ async function evaluatePython() {
 
 function setMaterial(){
     const sel = document.querySelector('#educational-material');
-    console.log(sel.value);
+    if (!sel.value){
+        console.log("!sel.value");
+        return;
+    }
 
     fetch("./materials/"+sel.value+".py", {
         method: "GET",
-      }).then(response => response.text())
-      .then(text => {
-        editor.setValue(text);
-      });
+    })
+    .then(response => response.text())
+    .then(text => {editor.setValue(text);});
 }
