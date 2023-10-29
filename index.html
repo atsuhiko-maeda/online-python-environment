@@ -27,11 +27,22 @@
             padding: 10px;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/python/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.22.1/full/pyodide.js"></script>
+    <script src="onlinePython.js"></script>
 </head>
-<body style="margin:0px; padding:0px;">
+<body style="margin:0px; padding:0px;" onload="init()">
     <div class="container" >
         <div class="left-div">
             <!-- 左側のコンテンツをここに配置 -->
+            <select name="pet" id="educational-material" >
+                <option value="">--学習コンテンツを選んでください。--</option>
+                <option value="e1_1">演習1-1 変数，四則演算，リスト</option>
+                <option value="e1_2">演習1-2 条件分岐(if)，繰り返し(for)</option>
+            </select>
+            <button id="set_material" onclick="setMaterial()">学習コンテンツをセット</button><br>
+
             <textarea id="code-editor" type="text"></textarea>
             <button id="run" onclick="evaluatePython()">Run</button>
         </div>
@@ -39,105 +50,5 @@
             <textarea id="output" style="width: 100%;height:100%; background-color: #2A2D3D;color:#BE94E2" disabled></textarea>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/python/python.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.22.1/full/pyodide.js"></script>
-    <!-- <script src="./pyodide/pyodide.js"></script> -->
-    <script>
-        const output = document.querySelector('#output');
-        const code_edior = document.querySelector('#code-editor');
-
-        // CodeMirrorを初期化
-        var editor = CodeMirror.fromTextArea(code_edior, {
-            mode: "python",
-            lineNumbers: true,
-            theme: "material-palenight"
-        });
-        editor.setSize("100%", "90%");
-
-        // サンプルコードを設定
-        var sampleCode = `import math
-
-list = [n for n in range(0,10)]
-print(list[5:8])
-
-print(math.sin(0.5))
-print(math.log(10))
-
-array1=[1,2,3]
-array2=[4,5,6]
-for x,y in zip(array1,array2):
-    print(x,y)
-
-dict_ = {'a':123,'b':456}
-
-for k in dict_:
-    print(k,dict_[k])
-
-def add(x,y):
-	return x+y
-
-print(add(100,200))
-`;
-
-        editor.setValue(sampleCode); // 初期コードをセット
-
-        // define a new console
-        var console=(function(oldCons){
-            return {
-                log: function(text){
-                    oldCons.log(text);
-                    // Your code
-                    output.value+=text+"\n";
-                },
-                info: function (text) {
-                    oldCons.info(text);
-                    // Your code
-                    // output.value+=text;
-                },
-                warn: function (text) {
-                    oldCons.warn(text);
-                    // Your code
-                    // output.value+=text;
-                },
-                error: function (text) {
-                    oldCons.error(text);
-                    // Your code
-                    // output.value+=text;
-                }
-            };
-        }(window.console));
-
-        //Then redefine the old console
-        window.console = console;
-
-        output.value = "Initializing...\n";
-        // init Pyodide
-        async function main() {
-            let pyodide = await loadPyodide();
-            output.value = "Ready!\n";
-            return pyodide;
-        }
-        let pyodideReadyPromise = main();
-
-        async function evaluatePython() {
-            output.value="";
-            let pyodide = await pyodideReadyPromise;
-            pyodide.FS.writeFile("test.py", editor.getValue());
-
-            let promise = new Promise((resolve, reject) => {
-            pyodide.runPython(`
-                exec(open('test.py').read())
-            `)
-            // import sys
-            //     sys.modules.pop("test", None)
-            // resolve(true)
-            }).catch(err => {
-                    console.log(err);
-            });
-
-            await promise;
-        }
-    </script>
 </body>
 </html>
