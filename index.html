@@ -40,24 +40,30 @@
     <div class="container" >
         <div class="left-div">
             <!-- 左側のコンテンツをここに配置 -->
-            <select name="pet" id="educational-material" >
+            <!-------------------------------------------------------------------------->
+            <select id="educational-material" >
                 <option value="">--学習コンテンツを選んでください--</option>
                 <option value="e1_1">演習1-1 変数，四則演算，リスト</option>
                 <option value="e1_2">演習1-2 条件分岐(if)，繰り返し(for)</option>
             </select>
             <button id="set_material" onclick="setMaterial()">学習コンテンツをセット</button><br>
-
+            <!-------------------------------------------------------------------------->
             <textarea id="code-editor" type="text"></textarea>
-            <button id="run" onclick="evaluatePython()">実行</button>
+            <!-------------------------------------------------------------------------->
+            <span style="color:white">フォントサイズ: </span>
+            <button id="increase_font_size">+</button><button id="decrease_font_size">-</button>
 
-            <span style="color:#BE94E2">theme: </span>
+            <span style="color:white">テーマ: </span>
             <select id="theme-selector">
                 <option value="default">Default</option>
             </select>
+
+            <button id="run" style="float:right;">プログラムを実行</button>
+            <!-------------------------------------------------------------------------->
         </div>
         <div class="right-div">
             <!-- 右側のコンテンツをここに配置 -->
-            <textarea id="output" style="width: 100%;height:100%; background-color: #2A2D3D;color:#BE94E2" disabled></textarea>
+            <textarea id="output" class="CodeMirror" style="width: 100%;height:100%; background-color: #2A2D3D;color:#BE94E2" disabled></textarea>
         </div>
     </div>
 </body>
