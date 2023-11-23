@@ -1,5 +1,7 @@
 var editor;
+var output_cm;
 var pyodideReadyPromise;
+
 const sampleCode = `import math
 import numpy as np
 
@@ -24,64 +26,60 @@ def add(x,y):
 
 print(add(100,200))
 `;
-var themeStyle;
-var themeSelector;
-const theme_array = ["3024-day", "3024-night", "abbott", "abcdef", "ambiance-mobile", "ambiance", "ayu-dark", "ayu-mirage", "base16-dark", "base16-light", "bespin", "blackboard", "cobalt", "colorforth", "darcula", "dracula", "duotone-dark", "duotone-light", "eclipse", "elegant", "erlang-dark", "gruvbox-dark", "hopscotch", "icecoder", "idea", "isotope", "juejin", "lesser-dark", "liquibyte", "lucario", "material-darker", "material-ocean", "material-palenight", "material", "mbo", "mdn-like", "midnight", "monokai", "moxer", "neat", "neo", "night", "nord", "oceanic-next", "panda-syntax", "paraiso-dark", "paraiso-light", "pastel-on-dark", "railscasts", "rubyblue", "seti", "shadowfox", "solarized", "ssms", "the-matrix", "tomorrow-night-bright", "tomorrow-night-eighties", "ttcn", "twilight", "vibrant-ink", "xq-dark", "xq-light", "yeti", "yonce", "zenburn"];
+
+const SETTING = JSON.parse(localStorage.getItem("SETTING"))??  {
+    'FONT_SIZE':24
+    ,'THEME': 'Default'
+    ,'CODE':sampleCode
+};
+
+const theme_array = ["3024-day", "3024-night", "abbott", "abcdef", "ambiance-mobile", 
+"ambiance", "ayu-dark", "ayu-mirage", "base16-dark", "base16-light", "bespin", 
+"blackboard", "cobalt", "colorforth", "darcula", "dracula", "duotone-dark", 
+"duotone-light", "eclipse", "elegant", "erlang-dark", "gruvbox-dark", "hopscotch", 
+"icecoder", "idea", "isotope", "juejin", "lesser-dark", "liquibyte", "lucario", 
+"material-darker", "material-ocean", "material-palenight", "material", "mbo", 
+"mdn-like", "midnight", "monokai", "moxer", "neat", "neo", "night", "nord", 
+"oceanic-next", "panda-syntax", "paraiso-dark", "paraiso-light", "pastel-on-dark", 
+"railscasts", "rubyblue", "seti", "shadowfox", "solarized", "ssms", "the-matrix", 
+"tomorrow-night-bright", "tomorrow-night-eighties", "ttcn", "twilight", 
+"vibrant-ink", "xq-dark", "xq-light", "yeti", "yonce", "zenburn"];
 
 function init(){
-    const output = document.querySelector('#output');
     const code_edior = document.querySelector('#code-editor');
-
-
-    // // カスタムキーマップを定義
-    // var customKeyMap = {
-    //     "Ctrl-S": function(cm) {
-    //     // Ctrl-Sが押されたときの処理
-    //     alert("保存しました！");
-    //     // ここに保存処理を追加することができます
-    //     },
-    //     "Ctrl-Z": "undo", // Ctrl-Zはデフォルトのアンドゥ動作をトリガー
-    //     "Ctrl-Y": "redo", // Ctrl-Yはデフォルトのリドゥ動作をトリガー
-    //     "Ctrl-F": "find",
-    //     // 他のカスタムキーバインドを追加できます
-    // };  
-    // // カスタムキーマップをCodeMirrorに登録
-    // CodeMirror.keyMap["my-custom-keymap"] = customKeyMap;
+    const output = document.querySelector('#output');
 
     // CodeMirrorを初期化
+    // async function sub(){
+    //     await function sub2(){
+            const themeStyle = document.querySelector("#theme-style");
+            themeStyle.href = "https://codemirror.net/5/theme/" + SETTING['THEME'] + ".css";
+            // console.log("sub2");
+    //     }();
+    // }
+    // sub();
+    // console.log("sub");
+
     editor = CodeMirror.fromTextArea(code_edior, {
         mode: "python",
         lineNumbers: true,
         matchBrackets: true,
         autoCloseBrackets: true,
-        theme: "zenburn",
+        theme: SETTING['THEME'],
         keyMap: "sublime"
-        // keyMap: "my-custom-keymap"
     });
     editor.setSize("100%", "90%");
+    editor.setValue(SETTING['CODE']);
 
-    themeStyle = document.getElementById("theme-style");
-
-    const themeSelector = document.getElementById("theme-selector");
-    for (const t of theme_array){
-        const option = document.createElement('option');
-        option.value = t;
-        option.textContent = t;
-        themeSelector.appendChild(option);
-    }
-
-
-    // テーマ選択要素の変更イベントを監視
-    themeSelector.addEventListener("change", function() {
-        var selectedTheme = themeSelector.value;
-        // 選択されたテーマのCSSファイルを読み込む
-        themeStyle.href = "https://codemirror.net/5/theme/" + selectedTheme + ".css";
-        // エディタに選択されたテーマを適用
-        editor.setOption("theme", selectedTheme);
+    output_cm = CodeMirror.fromTextArea(output, {
+        theme: SETTING['THEME']
     });
-  
-    // サンプルコードを設定
-    editor.setValue(sampleCode);
+    output_cm.setSize("100%", "100%");
+    output_cm.setOption("readOnly", true);
+
+    const textElements = document.querySelectorAll(".CodeMirror");
+    for (let i=0 ; i<textElements.length ; i++)
+        textElements[i].style.fontSize = SETTING['FONT_SIZE'] + "px";
 
     // define a new console
     var console=(function(oldCons){
@@ -89,7 +87,8 @@ function init(){
             log: function(text){
                 oldCons.log(text);
                 // Your code
-                output.value+=text+"\n";
+                // output.value+=text+"\n";
+                output_cm.setValue(output_cm.getValue() + text+"\n");
             },
             info: function (text) {
                 oldCons.info(text);
@@ -109,7 +108,9 @@ function init(){
     window.console = console;
 
 
-    output.value = "Initializing...\n";
+    // output.value = "Initializing...\n";
+    output_cm.setValue("読み込み中...\n");
+
     // init Pyodide
     async function main() {
         let pyodide = await loadPyodide();
@@ -117,14 +118,77 @@ function init(){
         await pyodide.loadPackage("numpy");
         // await pyodide.loadPackage("scikit-learn");
 
-        output.value = "Ready!\n";
+        // output.value = "Ready!\n";
+        output_cm.setValue("準備完了!\n");    
         return pyodide;
     }
     pyodideReadyPromise = main();
+
+    init_ui();
+}
+
+function init_ui(){
+    // themeの選択肢を作成
+    const themeSelector = document.querySelector("#theme-selector");
+    for (const t of theme_array){
+        const option = document.createElement('option');
+        option.value = t;
+        option.textContent = t;
+        if (option.value==SETTING['THEME'])
+            option.selected=true;
+        else
+            option.selected=false;
+
+        themeSelector.appendChild(option);
+    }
+
+    // テーマ選択要素の変更イベントを監視
+    themeSelector.addEventListener("change", function() {
+        var selectedTheme = themeSelector.value;
+        const themeStyle = document.querySelector("#theme-style");
+        themeStyle.href = "https://codemirror.net/5/theme/" + selectedTheme + ".css";
+        SETTING['THEME']=selectedTheme;
+        editor.setOption("theme", selectedTheme);
+        output_cm.setOption("theme",selectedTheme);
+        save_settings();
+    });
+
+    function changeFontSize(value) {
+        SETTING['FONT_SIZE']=SETTING['FONT_SIZE']+value;
+
+        const textElements = document.querySelectorAll(".CodeMirror");
+        for (let i=0 ; i<textElements.length ; i++)
+            textElements[i].style.fontSize = SETTING['FONT_SIZE'] + "px";
+
+    }
+
+    document.querySelector("#increase_font_size").addEventListener("click",function(){
+        changeFontSize(1);
+        save_settings();
+    });
+
+    document.querySelector("#decrease_font_size").addEventListener("click",function(){
+        changeFontSize(-1);
+        save_settings();
+    });
+
+    document.querySelector("#run").addEventListener("click",function(){
+        SETTING['CODE']=editor.getValue();
+        save_settings();
+        evaluatePython();
+    });
+
+
+}
+
+function save_settings(){
+    localStorage.setItem("SETTING",JSON.stringify(SETTING));
 }
 
 async function evaluatePython() {
-    output.value="";
+    // output.value="";
+    output_cm.setValue("");
+
     let pyodide = await pyodideReadyPromise;
     pyodide.FS.writeFile("test.py", editor.getValue());
 
@@ -132,9 +196,6 @@ async function evaluatePython() {
         pyodide.runPython(`
             exec(open('test.py').read())
         `)
-    // import sys
-    //     sys.modules.pop("test", None)
-    // resolve(true)
     }).catch(err => {
             console.log(err);
     });
