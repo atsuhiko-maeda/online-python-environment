@@ -1,10 +1,10 @@
 # 演習問題1-1: 
 
-# ABCDEと表示するプログラムを
+# ABCDEと表示するプログラム（ただし1文字表示するごとに改行する）を
 # 下記のコードを並べ替え，アンコメントして作成せよ．
 
-# print("D",end="")#1
-# print("B",end="")#2
-# print("E",end="")#3
-# print("C",end="")#4
-# print("A",end="")#5
+# print("D")#1
+# print("B")#2
+# print("E")#3
+# print("C")#4
+# print("A")#5
