@@ -50,15 +50,8 @@ function init(){
     const output = document.querySelector('#output');
 
     // CodeMirrorを初期化
-    // async function sub(){
-    //     await function sub2(){
-            const themeStyle = document.querySelector("#theme-style");
-            themeStyle.href = "https://codemirror.net/5/theme/" + SETTING['THEME'] + ".css";
-            // console.log("sub2");
-    //     }();
-    // }
-    // sub();
-    // console.log("sub");
+    const themeStyle = document.querySelector("#theme-style");
+    themeStyle.href = "https://codemirror.net/5/theme/" + SETTING['THEME'] + ".css";
 
     editor = CodeMirror.fromTextArea(code_edior, {
         mode: "python",
@@ -66,13 +59,15 @@ function init(){
         matchBrackets: true,
         autoCloseBrackets: true,
         theme: SETTING['THEME'],
-        keyMap: "sublime"
+        keyMap: "sublime",
+        lineWrapping:true
     });
     editor.setSize("100%", "90%");
     editor.setValue(SETTING['CODE']);
 
     output_cm = CodeMirror.fromTextArea(output, {
-        theme: SETTING['THEME']
+        theme: SETTING['THEME'],
+        lineWrapping:true
     });
     output_cm.setSize("100%", "100%");
     output_cm.setOption("readOnly", true);
@@ -116,6 +111,7 @@ function init(){
         let pyodide = await loadPyodide();
         
         await pyodide.loadPackage("numpy");
+        await pyodide.loadPackage("matplotlib");
         // await pyodide.loadPackage("scikit-learn");
 
         // output.value = "Ready!\n";
