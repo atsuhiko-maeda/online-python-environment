@@ -43,10 +43,16 @@
             <!-------------------------------------------------------------------------->
             <select id="educational-material" >
                 <option value="">--演習教材を選んでください--</option>
-                <option value="e1_1">演習1-1 print文並べ替え</option>
-                <option value="e1_2">演習1-2 九九の計算</option>
-                <option value="e1_3">演習1-3 FizzBuzz問題</option>
-                <option value="e1_4">演習1-4 for文</option>
+                <optgroup label="第08回 繰り返し，制御文">
+                    <option value="e1_1">演習08-1</option>
+                    <option value="e1_2">演習08-2</option>
+                    <option value="e1_3">演習08-3</option>
+                    <option value="e1_4">演習08-4</option>    
+                </optgroup>
+                <optgroup label="第13回 グラフ">
+                    <option value="matplot_sample">演習13-1</option>
+                    <option value="matplot_sample2">演習13-2</option>
+                </optgroup>
             </select>
             <button id="set_material" onclick="setMaterial()">学習コンテンツをセット</button><br>
             <!-------------------------------------------------------------------------->
