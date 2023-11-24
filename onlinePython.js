@@ -60,6 +60,11 @@ function init(){
         autoCloseBrackets: true,
         theme: SETTING['THEME'],
         keyMap: "sublime",
+
+        tabSize: 4,
+        indentUnit: 4,
+        indentWithTabs: true,
+                
         lineWrapping:true
     });
     editor.setSize("100%", "90%");
