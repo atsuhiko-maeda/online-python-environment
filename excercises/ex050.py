@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib
 matplotlib.use("module://matplotlib_pyodide.html5_canvas_backend")
 
+from matplotlib import pyplot as plt
+
 # データセット: 東京の平均気温
 x = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 y1 = [7.1, 8.3, 10.7, 12.8, 19.5, 23.2, 24.3, 29.1, 24.2, 17.5, 14.0, 7.7]  # 2020年
