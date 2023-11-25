@@ -250,7 +250,7 @@ async function evaluatePython() {
 }
 
 function setMaterial(){
-    const sel = document.querySelector('#educational-material');
+    const sel = document.querySelector('#excercises');
     if (!sel.value){
         alert("ファイルがありません.");
         // console.log("!sel.value");
@@ -258,7 +258,7 @@ function setMaterial(){
     }
 
     fileName=sel.value;
-    fetch("./materials/"+fileName, {
+    fetch("./excercises/"+fileName, {
         method: "GET",
     })
     .then(response => response.text())

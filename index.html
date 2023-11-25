@@ -51,7 +51,7 @@
         <div class="left-div">
             <!-- 左側のコンテンツをここに配置 -->
             <!-------------------------------------------------------------------------->
-            <select id="educational-material" >
+            <select id="excercises" >
                 <option value="">--演習教材を選んでください--</option>
                 <optgroup label="第08回 繰り返し，制御文">
                     <option value="e1_1.py">e1_1.py</option>
@@ -65,7 +65,7 @@
                 </optgroup>
             </select>
             <button id="set_material" onclick="setMaterial()">学習コンテンツをセット</button>
-            <button id="download">ダウンロード</button>
+            <button id="run" style="float:right;">プログラムを実行</button>
             <!-------------------------------------------------------------------------->
             <div id="editor" ></div>            
             <!-------------------------------------------------------------------------->
@@ -77,8 +77,7 @@
                 <optgroup id="Bright" label="Bright"></optgroup>
                 <optgroup id="Dark" label="Dark"></optgroup>
             </select>
-
-            <button id="run" style="float:right;">プログラムを実行</button>
+            <button id="download" style="float:right;">ダウンロード</button>
             <!-------------------------------------------------------------------------->
         </div>
         <div class="right-div">
