@@ -274,7 +274,7 @@ function setMaterial(){
         // var text = "これは<START>置き換えたいテキスト<END>です。これは<START>別の置き換えたいテキスト<END>です。";
 
         // 正規表現を使用して"<START>"から"<END>"に囲まれたテキストを置き換える
-        var pattern = /<START>(.*?)<END>/g;
+        var pattern = /#<shuffle>(.*?)#<\/shuffle>/g;
         var newText = text.replace(pattern, function(match, capturedText) {
             // capturedTextには"<START>"と"<END>"の間のテキストが格納されています
             console.log(capturedText);
