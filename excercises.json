@@ -2,7 +2,7 @@
     {
         "chapter":"第1章",
         "exercises":[
-            "ex011.py",
+            "ex010.py",
             "ex012.py",
             "ex013.py",
             "ex014.py"
@@ -11,8 +11,8 @@
     {
         "chapter":"第2章",
         "exercises":[
-            "ex021.py",
-            "ex022.py"
+            "ex050.py",
+            "ex051.py"
         ]            
     }
 ]
