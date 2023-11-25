@@ -124,7 +124,7 @@ function init(){
         await pyodide.loadPackage("numpy");
         await pyodide.loadPackage("matplotlib");
         // await pyodide.loadPackage("scikit-learn");
-
+        
         output.setValue("準備完了!\n");    
         return pyodide;
     }
@@ -135,7 +135,14 @@ function init(){
     // JSONファイルを取得して表示
     fetch("excercises.json")
         .then( response => response.json())
-        .then( data => alert(data));
+        .then( data => {
+            for(const d of data){
+                console.log(d['chapter']);
+                for(const e of d['excercises']){
+                    console.log(e);
+                }
+            }
+        });
 
     init_ui();
 }
