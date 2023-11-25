@@ -293,7 +293,7 @@ function setMaterial(){
             // シャッフルされた行を結合して新しいテキストとして返す
             return lines.join('\n');
         });
-        alert(newText);
+        // alert(newText);
 
         editor.session.setValue(newText);
     });
