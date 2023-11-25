@@ -1,10 +1,10 @@
-# 演習問題1-1: 
+#ex010.py 
 
 # ABCDEと表示するプログラム（ただし1文字表示するごとに改行する）を
 # 下記のコードを並べ替え，アンコメントして作成せよ．
 
-# print("D")#1
-# print("B")#2
-# print("E")#3
-# print("C")#4
-# print("A")#5
+print("A")
+print("B")
+print("C")
+print("E")
+print("E")
