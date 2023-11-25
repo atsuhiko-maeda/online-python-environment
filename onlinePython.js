@@ -58,43 +58,43 @@ const theme_array_dark = [
     "tomorrow_night"
 ];
 
-var text=`
-#ex010.py 
+// var text=`
+// #ex010.py 
 
-# ABCDEと表示するプログラム（ただし1文字表示するごとに改行する）を
-# 下記のコードを並べ替え，アンコメントして作成せよ．
+// # ABCDEと表示するプログラム（ただし1文字表示するごとに改行する）を
+// # 下記のコードを並べ替え，アンコメントして作成せよ．
 
-#<shuffle>
-print("A")
-print("B")
-print("C")
-print("D")
-print("E")
-#</shuffle>
-`;
-var pattern = /#<shuffle>([\s\S]*?)#<\/shuffle>/g;
-var newText = text.replace(pattern, function(match, capturedText) {
+// #<shuffle>
+// print("A")
+// print("B")
+// print("C")
+// print("D")
+// print("E")
+// #</shuffle>
+// `;
+// var pattern = /#<shuffle>([\s\S]*?)#<\/shuffle>/g;
+// var newText = text.replace(pattern, function(match, capturedText) {
 
-    // alert(match);
-    // alert(capturedText);
-    // 改行文字で分割し、行ごとに配列に格納
-    // var lines = match.trim().split('\n');
-    var lines = match.split('\n');
+//     // alert(match);
+//     // alert(capturedText);
+//     // 改行文字で分割し、行ごとに配列に格納
+//     // var lines = match.trim().split('\n');
+//     var lines = match.split('\n');
 
-    // 配列をシャッフル
-    for (var i = 1; i < lines.length-1; i++) {
-        var j = Math.floor(1+Math.random() * (lines.length-2));
-        [lines[i], lines[j]] = [lines[j], lines[i]];
-    }
-    // for (var i = lines.length - 2; i > 1; i--) {
-    //     var j = Math.floor(Math.random() * (i + 1));
-    //     [lines[i], lines[j]] = [lines[j], lines[i]];
-    // }
+//     // 配列をシャッフル
+//     for (var i = 1; i < lines.length-1; i++) {
+//         var j = Math.floor(1+Math.random() * (lines.length-2));
+//         [lines[i], lines[j]] = [lines[j], lines[i]];
+//     }
+//     // for (var i = lines.length - 2; i > 1; i--) {
+//     //     var j = Math.floor(Math.random() * (i + 1));
+//     //     [lines[i], lines[j]] = [lines[j], lines[i]];
+//     // }
 
-    // シャッフルされた行を結合して新しいテキストとして返す
-    return lines.join('\n');
-});
-alert(newText);
+//     // シャッフルされた行を結合して新しいテキストとして返す
+//     return lines.join('\n');
+// });
+// alert(newText);
 
 function init(){
 
@@ -320,7 +320,7 @@ function setMaterial(){
 
             // 配列をシャッフル
             for (var i = 1; i < lines.length-1; i++) {
-                var j = Math.floor(1+Math.random() * (lines.length-1));
+                var j = Math.floor(1+Math.random() * (lines.length-2));
                 [lines[i], lines[j]] = [lines[j], lines[i]];
             }
             // for (var i = lines.length - 2; i > 1; i--) {
