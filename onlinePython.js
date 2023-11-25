@@ -271,16 +271,31 @@ function setMaterial(){
     .then(response => response.text())
     .then(text => {
 
-        // var text = "これは<START>置き換えたいテキスト<END>です。これは<START>別の置き換えたいテキスト<END>です。";
+//         var text = `
+// #<shuffle>
+// for i in range(1,10):#3
+//     for j in range(1,10):#2
+//         print(f"{i}x{j}={i*j}")#1
+// #</shuffle>
+// `;
 
-        // 正規表現を使用して"<START>"から"<END>"に囲まれたテキストを置き換える
-        var pattern = /#<shuffle>(.*?)#<\/shuffle>/g;
+        var pattern = /#<shuffle>([\s\S]*?)#<\/shuffle>/g;
         var newText = text.replace(pattern, function(match, capturedText) {
-            // capturedTextには"<START>"と"<END>"の間のテキストが格納されています
-            console.log(capturedText);
-            // ここでは新しいテキストに置き換える処理を行います
-            return "新しいテキスト"; // ここを置き換えたいテキストに置き換えます
+
+            alert(capturedText);
+            // 改行文字で分割し、行ごとに配列に格納
+            var lines = capturedText.trim().split('\n');
+
+            // 配列をシャッフル
+            for (var i = lines.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                [lines[i], lines[j]] = [lines[j], lines[i]];
+            }
+
+            // シャッフルされた行を結合して新しいテキストとして返す
+            return lines.join('\n');
         });
+        alert(newText);
 
         editor.session.setValue(newText);
     });
