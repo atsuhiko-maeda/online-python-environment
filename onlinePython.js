@@ -97,18 +97,18 @@ function init(){
                 oldCons.log(text);
                 output.setValue(output.getValue() + text+"\n");
             },
-            // info: function (text) {
-            //     oldCons.info(text);
-            //     // output.value+=text;
-            // },
-            // warn: function (text) {
-            //     oldCons.warn(text);
-            //     // output.value+=text;
-            // },
-            // error: function (text) {
-            //     oldCons.error(text);
-            //     // output.value+=text;
-            // }
+            info: function (text) {
+                oldCons.info(text);
+                // output.value+=text;
+            },
+            warn: function (text) {
+                oldCons.warn(text);
+                // output.value+=text;
+            },
+            error: function (text) {
+                oldCons.error(text);
+                // output.value+=text;
+            }
         };
     }(window.console));
     //Then redefine the old console
