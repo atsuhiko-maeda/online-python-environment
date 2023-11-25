@@ -97,18 +97,18 @@ function init(){
                 oldCons.log(text);
                 output.setValue(output.getValue() + text+"\n");
             },
-            info: function (text) {
-                oldCons.info(text);
-                // output.value+=text;
-            },
-            warn: function (text) {
-                oldCons.warn(text);
-                // output.value+=text;
-            },
-            error: function (text) {
-                oldCons.error(text);
-                // output.value+=text;
-            }
+            // info: function (text) {
+            //     oldCons.info(text);
+            //     // output.value+=text;
+            // },
+            // warn: function (text) {
+            //     oldCons.warn(text);
+            //     // output.value+=text;
+            // },
+            // error: function (text) {
+            //     oldCons.error(text);
+            //     // output.value+=text;
+            // }
         };
     }(window.console));
     //Then redefine the old console
@@ -138,7 +138,7 @@ function init(){
         .then( data => {
             for(const d of data){
                 console.log(d['chapter']);
-                console.log(e);
+                // console.log(d);
                 for(const e of d['exercises']){
                     console.log(e);
                 }
