@@ -74,7 +74,7 @@ function init(){
         fontSize:SETTING['FONT_SIZE'] + "px",
         theme: "ace/theme/"+SETTING['THEME']
     });
-    editor.setValue(SETTING['CODE']);
+    editor.session.setValue(SETTING['CODE']);
 
 
     output = ace.edit("output");
@@ -95,7 +95,7 @@ function init(){
         return {
             log: function(text){
                 oldCons.log(text);
-                output.setValue(output.getValue() + text+"\n");
+                output.session.setValue(output.getValue() + text+"\n");
             },
             info: function (text) {
                 oldCons.info(text);
@@ -115,7 +115,7 @@ function init(){
     window.console = console;
 
 
-    output.setValue("読み込み中...\n");
+    output.session.setValue("読み込み中...\n");
 
     // init Pyodide
     async function main() {
@@ -125,7 +125,7 @@ function init(){
         await pyodide.loadPackage("matplotlib");
         // await pyodide.loadPackage("scikit-learn");
         
-        output.setValue("準備完了!\n");    
+        output.session.setValue("準備完了!\n");    
         return pyodide;
     }
     pyodideReadyPromise = main();
@@ -240,7 +240,7 @@ function save_settings(){
 }
 
 async function evaluatePython() {
-    output.setValue("");
+    output.session.setValue("");
 
     let pyodide = await pyodideReadyPromise;
     pyodide.FS.writeFile("test.py", editor.getValue());
@@ -269,5 +269,19 @@ function setMaterial(){
         method: "GET",
     })
     .then(response => response.text())
-    .then(text => {editor.setValue(text);});
+    .then(text => {
+
+        // var text = "これは<START>置き換えたいテキスト<END>です。これは<START>別の置き換えたいテキスト<END>です。";
+
+        // 正規表現を使用して"<START>"から"<END>"に囲まれたテキストを置き換える
+        var pattern = /<START>(.*?)<END>/g;
+        var newText = text.replace(pattern, function(match, capturedText) {
+            // capturedTextには"<START>"と"<END>"の間のテキストが格納されています
+            console.log(capturedText);
+            // ここでは新しいテキストに置き換える処理を行います
+            return "新しいテキスト"; // ここを置き換えたいテキストに置き換えます
+        });
+
+        editor.session.setValue(newText);
+    });
 }
