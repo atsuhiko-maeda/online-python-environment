@@ -10,7 +10,7 @@
     },
     {
         "chapter":"第2章",
-        "practice":[
+        "exercises":[
             "ex021.py",
             "ex022.py"
         ]            

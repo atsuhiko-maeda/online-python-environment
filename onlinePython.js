@@ -138,7 +138,8 @@ function init(){
         .then( data => {
             for(const d of data){
                 console.log(d['chapter']);
-                for(const e of d['excercises']){
+                console.log(e);
+                for(const e of d['exercises']){
                     console.log(e);
                 }
             }
