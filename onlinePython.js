@@ -136,12 +136,19 @@ function init(){
     fetch("excercises.json")
         .then( response => response.json())
         .then( data => {
+            const excercises = document.querySelector("#excercises");
             for(const d of data){
-                console.log(d['chapter']);
+                const optgroup = document.createElement('optgroup');
+                optgroup.label=d['chapter'];
+                // console.log(d['chapter']);
                 // console.log(d);
                 for(const e of d['exercises']){
-                    console.log(e);
+                    const option = document.createElement('option');
+                    option.value=e;
+                    option.textContent=e;
+                    optgroup.appendChild(option);    
                 }
+                excercises.appendChild(optgroup);
             }
         });
 
