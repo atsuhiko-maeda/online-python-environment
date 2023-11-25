@@ -130,6 +130,13 @@ function init(){
     }
     pyodideReadyPromise = main();
 
+
+
+    // JSONファイルを取得して表示
+    fetch("excercises.json")
+        .then( response => response.json())
+        .then( data => alert(data));
+
     init_ui();
 }
 
