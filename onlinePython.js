@@ -1,6 +1,7 @@
-var editor;
-var output_cm;
-var pyodideReadyPromise;
+let editor;
+let output;
+let pyodideReadyPromise;
+let fileName="untitled.py";
 
 const sampleCode = `import math
 import numpy as np
@@ -29,66 +30,72 @@ print(add(100,200))
 
 const SETTING = JSON.parse(localStorage.getItem("SETTING"))??  {
     'FONT_SIZE':24
-    ,'THEME': 'Default'
+    ,'THEME': 'monokai'
     ,'CODE':sampleCode
 };
 
-const theme_array = ["3024-day", "3024-night", "abbott", "abcdef", "ambiance-mobile", 
-"ambiance", "ayu-dark", "ayu-mirage", "base16-dark", "base16-light", "bespin", 
-"blackboard", "cobalt", "colorforth", "darcula", "dracula", "duotone-dark", 
-"duotone-light", "eclipse", "elegant", "erlang-dark", "gruvbox-dark", "hopscotch", 
-"icecoder", "idea", "isotope", "juejin", "lesser-dark", "liquibyte", "lucario", 
-"material-darker", "material-ocean", "material-palenight", "material", "mbo", 
-"mdn-like", "midnight", "monokai", "moxer", "neat", "neo", "night", "nord", 
-"oceanic-next", "panda-syntax", "paraiso-dark", "paraiso-light", "pastel-on-dark", 
-"railscasts", "rubyblue", "seti", "shadowfox", "solarized", "ssms", "the-matrix", 
-"tomorrow-night-bright", "tomorrow-night-eighties", "ttcn", "twilight", 
-"vibrant-ink", "xq-dark", "xq-light", "yeti", "yonce", "zenburn"];
+const theme_array_bright = [
+    "chrome",
+    "dawn",
+    "github",
+    "iplastic",
+    "github",
+    "tomorrow",
+    "kuroir",
+    "katzenmilch"
+];
+    
+const theme_array_dark = [
+    "ambiance",
+    "dracula",
+    "cobalt",
+    "gruvbox",
+    "kr_theme",
+    "merbivore_soft",
+    "mono_industrial",
+    "monokai",
+    "pastel_on_dark",
+    "tomorrow_night"
+];
 
 function init(){
-    const code_edior = document.querySelector('#code-editor');
-    const output = document.querySelector('#output');
 
-    // CodeMirrorを初期化
-    const themeStyle = document.querySelector("#theme-style");
-    themeStyle.href = "https://codemirror.net/5/theme/" + SETTING['THEME'] + ".css";
+    editor = ace.edit("editor");
+    editor.getSession().setMode("ace/mode/python");
+  
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
 
-    editor = CodeMirror.fromTextArea(code_edior, {
-        mode: "python",
-        lineNumbers: true,
-        matchBrackets: true,
-        autoCloseBrackets: true,
-        theme: SETTING['THEME'],
-        keyMap: "sublime",
-
-        tabSize: 4,
-        indentUnit: 4,
-        indentWithTabs: true,
-                
-        lineWrapping:true
+        showInvisibles: true, 
+        hScrollBarAlwaysVisible: true,
+        vScrollBarAlwaysVisible: true,
+        fontSize:SETTING['FONT_SIZE'] + "px",
+        theme: "ace/theme/"+SETTING['THEME']
     });
-    editor.setSize("100%", "90%");
     editor.setValue(SETTING['CODE']);
 
-    output_cm = CodeMirror.fromTextArea(output, {
-        theme: SETTING['THEME'],
-        lineWrapping:true
-    });
-    output_cm.setSize("100%", "100%");
-    output_cm.setOption("readOnly", true);
 
-    const textElements = document.querySelectorAll(".CodeMirror");
-    for (let i=0 ; i<textElements.length ; i++)
-        textElements[i].style.fontSize = SETTING['FONT_SIZE'] + "px";
+    output = ace.edit("output");
+    output.setOptions({
+        highlightActiveLine: false,
+        readOnly: true,
+        wrapBehavioursEnabled: true,
+        hScrollBarAlwaysVisible: true,
+        vScrollBarAlwaysVisible: true,
+        highlightGutterLine:false,
+        showGutter: false,
+        fontSize:SETTING['FONT_SIZE'] + "px",
+        theme: "ace/theme/"+SETTING['THEME']
+    });
 
     // define a new console
     var console=(function(oldCons){
         return {
             log: function(text){
                 oldCons.log(text);
-                // Your code
-                // output.value+=text+"\n";
-                output_cm.setValue(output_cm.getValue() + text+"\n");
+                output.setValue(output.getValue() + text+"\n");
             },
             info: function (text) {
                 oldCons.info(text);
@@ -108,8 +115,7 @@ function init(){
     window.console = console;
 
 
-    // output.value = "Initializing...\n";
-    output_cm.setValue("読み込み中...\n");
+    output.setValue("読み込み中...\n");
 
     // init Pyodide
     async function main() {
@@ -119,8 +125,7 @@ function init(){
         await pyodide.loadPackage("matplotlib");
         // await pyodide.loadPackage("scikit-learn");
 
-        // output.value = "Ready!\n";
-        output_cm.setValue("準備完了!\n");    
+        output.setValue("準備完了!\n");    
         return pyodide;
     }
     pyodideReadyPromise = main();
@@ -130,37 +135,40 @@ function init(){
 
 function init_ui(){
     // themeの選択肢を作成
-    const themeSelector = document.querySelector("#theme-selector");
-    for (const t of theme_array){
-        const option = document.createElement('option');
-        option.value = t;
-        option.textContent = t;
-        if (option.value==SETTING['THEME'])
-            option.selected=true;
-        else
-            option.selected=false;
-
-        themeSelector.appendChild(option);
-    }
+    const set_theme = (elem, list)=>{
+        for (const t of list){
+            const option = document.createElement('option');
+            option.value = t;
+            option.textContent = t;
+            if (option.value==SETTING['THEME'])
+                option.selected=true;
+            else
+                option.selected=false;
+    
+                elem.appendChild(option);
+        }    
+    };
+    const bright = document.querySelector("#theme-selector #Bright");
+    const dark = document.querySelector("#theme-selector #Dark");
+    set_theme(bright,theme_array_bright);
+    set_theme(dark,theme_array_dark);
 
     // テーマ選択要素の変更イベントを監視
+    const themeSelector = document.querySelector("#theme-selector");
     themeSelector.addEventListener("change", function() {
-        var selectedTheme = themeSelector.value;
-        const themeStyle = document.querySelector("#theme-style");
-        themeStyle.href = "https://codemirror.net/5/theme/" + selectedTheme + ".css";
-        SETTING['THEME']=selectedTheme;
-        editor.setOption("theme", selectedTheme);
-        output_cm.setOption("theme",selectedTheme);
+        // var selectedTheme = themeSelector.value;
+        SETTING['THEME']=themeSelector.value;
+
+        editor.setTheme("ace/theme/"+SETTING['THEME']);
+        output.setTheme("ace/theme/"+SETTING['THEME']);
+
         save_settings();
     });
 
     function changeFontSize(value) {
         SETTING['FONT_SIZE']=SETTING['FONT_SIZE']+value;
-
-        const textElements = document.querySelectorAll(".CodeMirror");
-        for (let i=0 ; i<textElements.length ; i++)
-            textElements[i].style.fontSize = SETTING['FONT_SIZE'] + "px";
-
+        editor.setFontSize(SETTING['FONT_SIZE'] + "px");
+        output.setFontSize(SETTING['FONT_SIZE'] + "px");
     }
 
     document.querySelector("#increase_font_size").addEventListener("click",function(){
@@ -179,7 +187,30 @@ function init_ui(){
         evaluatePython();
     });
 
+    document.querySelector("#download").addEventListener('click', function() {
 
+        const content = editor.getValue();;    
+        // テキストファイルをBlob形式に変換する
+        let blob = new Blob([content]);    
+        // Blobデータに対するURLを発行する
+        let blobURL = window.URL.createObjectURL(blob);    
+        // URLをaタグに設定する
+        let a = document.createElement('a');
+        a.href = blobURL;
+        // download属性でダウンロード時のファイル名を指定
+        if (typeof aaresult === "undefined") {
+          a.download=fileName;
+        } else {
+          a.download = aaresult.name;
+        }; 
+    
+        // Firefoxの場合は、実際にDOMに追加しておく必要がある
+        document.body.appendChild(a);
+        // CLickしてダウンロード
+        a.click();
+        // 終わったら不要なので要素を削除
+        a.parentNode.removeChild(a);
+    });
 }
 
 function save_settings(){
@@ -187,8 +218,7 @@ function save_settings(){
 }
 
 async function evaluatePython() {
-    // output.value="";
-    output_cm.setValue("");
+    output.setValue("");
 
     let pyodide = await pyodideReadyPromise;
     pyodide.FS.writeFile("test.py", editor.getValue());
@@ -207,11 +237,13 @@ async function evaluatePython() {
 function setMaterial(){
     const sel = document.querySelector('#educational-material');
     if (!sel.value){
-        console.log("!sel.value");
+        alert("ファイルがありません.");
+        // console.log("!sel.value");
         return;
     }
 
-    fetch("./materials/"+sel.value+".py", {
+    fileName=sel.value;
+    fetch("./materials/"+fileName, {
         method: "GET",
     })
     .then(response => response.text())
