@@ -274,16 +274,21 @@ function setMaterial(){
         var pattern = /#<shuffle>([\s\S]*?)#<\/shuffle>/g;
         var newText = text.replace(pattern, function(match, capturedText) {
 
-            alert(match);
+            // alert(match);
             // alert(capturedText);
             // 改行文字で分割し、行ごとに配列に格納
-            var lines = capturedText.trim().split('\n');
+            // var lines = match.trim().split('\n');
+            var lines = match.split('\n');
 
             // 配列をシャッフル
-            for (var i = lines.length - 1; i > 0; i--) {
-                var j = Math.floor(Math.random() * (i + 1));
+            for (var i = 1; i < lines.length-1; i++) {
+                var j = Math.floor(1+Math.random() * (lines.length-1));
                 [lines[i], lines[j]] = [lines[j], lines[i]];
             }
+            // for (var i = lines.length - 2; i > 1; i--) {
+            //     var j = Math.floor(Math.random() * (i + 1));
+            //     [lines[i], lines[j]] = [lines[j], lines[i]];
+            // }
 
             // シャッフルされた行を結合して新しいテキストとして返す
             return lines.join('\n');
