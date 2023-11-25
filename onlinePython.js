@@ -271,18 +271,11 @@ function setMaterial(){
     .then(response => response.text())
     .then(text => {
 
-//         var text = `
-// #<shuffle>
-// for i in range(1,10):#3
-//     for j in range(1,10):#2
-//         print(f"{i}x{j}={i*j}")#1
-// #</shuffle>
-// `;
-
         var pattern = /#<shuffle>([\s\S]*?)#<\/shuffle>/g;
         var newText = text.replace(pattern, function(match, capturedText) {
 
-            alert(capturedText);
+            alert(match);
+            // alert(capturedText);
             // 改行文字で分割し、行ごとに配列に格納
             var lines = capturedText.trim().split('\n');
 
