@@ -58,44 +58,6 @@ const theme_array_dark = [
     "tomorrow_night"
 ];
 
-// var text=`
-// #ex010.py 
-
-// # ABCDEと表示するプログラム（ただし1文字表示するごとに改行する）を
-// # 下記のコードを並べ替え，アンコメントして作成せよ．
-
-// #<shuffle>
-// print("A")
-// print("B")
-// print("C")
-// print("D")
-// print("E")
-// #</shuffle>
-// `;
-// var pattern = /#<shuffle>([\s\S]*?)#<\/shuffle>/g;
-// var newText = text.replace(pattern, function(match, capturedText) {
-
-//     // alert(match);
-//     // alert(capturedText);
-//     // 改行文字で分割し、行ごとに配列に格納
-//     // var lines = match.trim().split('\n');
-//     var lines = match.split('\n');
-
-//     // 配列をシャッフル
-//     for (var i = 1; i < lines.length-1; i++) {
-//         var j = Math.floor(1+Math.random() * (lines.length-2));
-//         [lines[i], lines[j]] = [lines[j], lines[i]];
-//     }
-//     // for (var i = lines.length - 2; i > 1; i--) {
-//     //     var j = Math.floor(Math.random() * (i + 1));
-//     //     [lines[i], lines[j]] = [lines[j], lines[i]];
-//     // }
-
-//     // シャッフルされた行を結合して新しいテキストとして返す
-//     return lines.join('\n');
-// });
-// alert(newText);
-
 function init(){
 
     editor = ace.edit("editor");
@@ -178,8 +140,6 @@ function init(){
             for(const d of data){
                 const optgroup = document.createElement('optgroup');
                 optgroup.label=d['chapter'];
-                // console.log(d['chapter']);
-                // console.log(d);
                 for(const e of d['exercises']){
                     const option = document.createElement('option');
                     option.value=e;
@@ -242,14 +202,14 @@ function init_ui(){
     });
 
     document.querySelector("#run").addEventListener("click",function(){
-        SETTING['CODE']=editor.getValue();
+        SETTING['CODE']=editor.session.getValue();
         save_settings();
         evaluatePython();
     });
 
     document.querySelector("#download").addEventListener('click', function() {
 
-        const content = editor.getValue();;    
+        const content = editor.session.getValue();;    
         // テキストファイルをBlob形式に変換する
         let blob = new Blob([content]);    
         // Blobデータに対するURLを発行する
@@ -271,6 +231,16 @@ function init_ui(){
         // 終わったら不要なので要素を削除
         a.parentNode.removeChild(a);
     });
+
+    document.querySelector("#copy").addEventListener('click', function() {
+
+        let lines = output.session.getValue().split('\n');
+        for (var i = 0; i < lines.length; i++) {
+            lines[i] = '# '+lines[i];
+        }    
+
+        navigator.clipboard.writeText(editor.session.getValue()+"\n# 実行結果\n"+lines.join('\n'));
+    });
 }
 
 function save_settings(){
@@ -281,7 +251,7 @@ async function evaluatePython() {
     output.session.setValue("");
 
     let pyodide = await pyodideReadyPromise;
-    pyodide.FS.writeFile("test.py", editor.getValue());
+    pyodide.FS.writeFile("test.py", editor.session.getValue());
 
     let promise = new Promise((resolve, reject) => {
         pyodide.runPython(`
@@ -304,34 +274,37 @@ function setMaterial(){
 
     fileName=sel.value;
     fetch("./excercises/"+fileName, {
+        cache: "no-store",
         method: "GET",
     })
     .then(response => response.text())
     .then(text => {
 
-        var pattern = /#<shuffle>([\s\S]*?)#<\/shuffle>/g;
+        var pattern = /#+\s*<!-?.*shuffle.*([\s\S]*?)#+\s*-+>/g;
         var newText = text.replace(pattern, function(match, capturedText) {
 
-            // alert(match);
-            // alert(capturedText);
-            // 改行文字で分割し、行ごとに配列に格納
-            // var lines = match.trim().split('\n');
             var lines = match.split('\n');
+            let noindent = (lines[0].includes("noindent"))? true:false;
+            let commentout = (lines[0].includes("commentout"))? true:false;
 
             // 配列をシャッフル
-            for (var i = 1; i < lines.length-1; i++) {
+            for (var i = 1; i < lines.length-1; i+=2) {
                 var j = Math.floor(1+Math.random() * (lines.length-2));
                 [lines[i], lines[j]] = [lines[j], lines[i]];
             }
-            // for (var i = lines.length - 2; i > 1; i--) {
-            //     var j = Math.floor(Math.random() * (i + 1));
-            //     [lines[i], lines[j]] = [lines[j], lines[i]];
-            // }
-
+            if (noindent){
+                for (var i = 1; i < lines.length-1; i++) {
+                    lines[i] = lines[i].trimStart();
+                }    
+            }
+            if (commentout){
+                for (var i = 1; i < lines.length-1; i++) {
+                    lines[i] = '# '+lines[i];
+                }    
+            }
             // シャッフルされた行を結合して新しいテキストとして返す
             return lines.join('\n');
         });
-        // alert(newText);
 
         editor.session.setValue(newText);
     });
