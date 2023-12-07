@@ -299,7 +299,7 @@ function setMaterial(){
             }
             if (commentout){
                 for (var i = 1; i < lines.length-1; i++) {
-                    if (line[i][0]!="#")
+                    if (!lines[i].startsWith("#"))
                         lines[i] = '# '+lines[i];
                 }    
             }
