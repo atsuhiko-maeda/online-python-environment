@@ -299,7 +299,8 @@ function setMaterial(){
             }
             if (commentout){
                 for (var i = 1; i < lines.length-1; i++) {
-                    lines[i] = '# '+lines[i];
+                    if line[i][0]!="#":
+                        lines[i] = '# '+lines[i];
                 }    
             }
             // シャッフルされた行を結合して新しいテキストとして返す
